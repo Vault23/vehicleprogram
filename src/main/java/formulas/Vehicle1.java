@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowListener;
+import java.awt.event.WindowStateListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +42,7 @@ public class Vehicle1 extends JFrame implements IFormula, IFrame {
     public Vehicle1(String name) {
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(dimension.width / 2, dimension.height / 2, 680, 600);
+        setBounds(dimension.width / 2, dimension.height / 2, dimension.width * 2 / 3, dimension.height * 2 / 3);
         setTitle(new String(("Расчет формул для " + name).getBytes(), StandardCharsets.UTF_8));
         try {
             InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream("Vehicle1.JPG");
@@ -50,8 +52,10 @@ public class Vehicle1 extends JFrame implements IFormula, IFrame {
         }
         dimg = image.getScaledInstance(image.getWidth() * 2 / 3, image.getHeight() * 2 / 3,
                 Image.SCALE_SMOOTH);
-        $$$setupUI$$$();
+        setup();
         add(panel1);
+        WindowStateListener winListener = new WindowListenerImpl(image, dimg, imageLabel, dimension);
+        addWindowStateListener(winListener);
         fwpBox.addItemListener(e -> fwp = Integer.parseInt(String.valueOf(e.getItem())));
         wbBox.addItemListener(e -> wb = Integer.parseInt(String.valueOf(e.getItem())));
         calculateButton.addActionListener(e -> {
@@ -62,7 +66,7 @@ public class Vehicle1 extends JFrame implements IFormula, IFrame {
     }
 
 
-    private void $$$setupUI$$$() {
+    private void setup() {
         panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(11, 3, new Insets(0, 0, 0, 0), -1, -1));
         panel1.setAlignmentX(1.0f);
@@ -81,18 +85,18 @@ public class Vehicle1 extends JFrame implements IFormula, IFrame {
         defaultComboBoxModel1.addElement("3800");
         defaultComboBoxModel1.addElement("3900");
         wbBox.setModel(defaultComboBoxModel1);
-        panel1.add(wbBox, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(170, 30), null, 0, false));
+        panel1.add(wbBox, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(170, 30), null, 0, false));
         wbBoxDescription = new JLabel();
         wbBoxDescription.setText(new String("Колесная база, мм – WB:".getBytes(), StandardCharsets.UTF_8));
-        panel1.add(wbBoxDescription, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(wbBoxDescription, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 2, false));
         fwpBoxDescription = new JLabel();
         fwpBoxDescription.setText(new String("Позиция ССУ, мм – FWP:".getBytes(), StandardCharsets.UTF_8));
-        panel1.add(fwpBoxDescription, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(fwpBoxDescription, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 2, false));
         formula1 = new JLabel();
         formula1.setAlignmentX(1.0f);
         formula1.setAlignmentY(1.0f);
         formula1.setText(new String("Нагрузка от полной массы на переднюю ось, кг – M1’:".getBytes(), StandardCharsets.UTF_8));
-        panel1.add(formula1, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(formula1, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 2, false));
         fwpBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
         defaultComboBoxModel2.addElement("0");
@@ -102,49 +106,49 @@ public class Vehicle1 extends JFrame implements IFormula, IFrame {
         defaultComboBoxModel2.addElement("675");
         defaultComboBoxModel2.addElement("700");
         fwpBox.setModel(defaultComboBoxModel2);
-        panel1.add(fwpBox, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(170, 30), null, 0, false));
+        panel1.add(fwpBox, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(170, 30), null, 0, false));
         m1Field = new JTextField();
         m1Field.setAutoscrolls(true);
         m1Field.setText("");
-        panel1.add(m1Field, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(170, 30), null, 0, false));
+        panel1.add(m1Field, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(170, 30), null, 0, false));
         m1Description = new JLabel();
         m1Description.setText(new String("Нагрузка на переднюю ось от снаряженной массы, кг – M1:".getBytes(), StandardCharsets.UTF_8));
-        panel1.add(m1Description, new GridConstraints(4, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(m1Description, new GridConstraints(4, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 2, false));
         m2Field = new JTextField();
-        panel1.add(m2Field, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(170, 30), null, 0, false));
+        panel1.add(m2Field, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(170, 30), null, 0, false));
         m2Description = new JLabel();
         m2Description.setText(new String("Нагрузка на ведущую ось от снаряженной массы, кг – M2:".getBytes(), StandardCharsets.UTF_8));
-        panel1.add(m2Description, new GridConstraints(5, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(m2Description, new GridConstraints(5, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 2, false));
         m5Field = new JTextField();
-        panel1.add(m5Field, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(170, 30), null, 0, false));
+        panel1.add(m5Field, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(170, 30), null, 0, false));
         m5Description = new JLabel();
         m5Description.setText(new String("Нагрузка на ССУ, кг – M5:".getBytes(), StandardCharsets.UTF_8));
-        panel1.add(m5Description, new GridConstraints(6, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(m5Description, new GridConstraints(6, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 2, false));
         resultsLabel = new JLabel();
-        Font resultsLabelFont = this.$$$getFont$$$(null, Font.BOLD, -1, resultsLabel.getFont());
+        Font resultsLabelFont = this.setFont(null, Font.BOLD, 25, resultsLabel.getFont());
         if (resultsLabelFont != null) resultsLabel.setFont(resultsLabelFont);
         resultsLabel.setText(new String("Результаты:".getBytes(), StandardCharsets.UTF_8));
-        panel1.add(resultsLabel, new GridConstraints(7, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(resultsLabel, new GridConstraints(7, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 2, false));
         final JLabel label1 = new JLabel();
-        Font label1Font = this.$$$getFont$$$(null, Font.BOLD, -1, label1.getFont());
+        Font label1Font = this.setFont(null, Font.BOLD, -1, label1.getFont());
         if (label1Font != null) label1.setFont(label1Font);
         label1.setText(new String("М1 + |М5 · FWP ÷ WB|".getBytes(), StandardCharsets.UTF_8));
-        panel1.add(label1, new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(label1, new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 2, false));
         result1 = new JLabel();
-        Font result1Font = this.$$$getFont$$$("Consolas", Font.BOLD, -1, result1.getFont());
+        Font result1Font = this.setFont("Consolas", Font.BOLD, -1, result1.getFont());
         if (result1Font != null) result1.setFont(result1Font);
         result1.setText("");
-        panel1.add(result1, new GridConstraints(8, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(result1, new GridConstraints(8, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 2, false));
         final JLabel label2 = new JLabel();
         label2.setText(new String("Нагрузка от полной массы на заднюю ось, кг – M2’: ".getBytes(), StandardCharsets.UTF_8));
-        panel1.add(label2, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(label2, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 2, false));
         final JLabel label3 = new JLabel();
-        Font label3Font = this.$$$getFont$$$(null, Font.BOLD, -1, label3.getFont());
+        Font label3Font = this.setFont(null, Font.BOLD, -1, label3.getFont());
         if (label3Font != null) label3.setFont(label3Font);
         label3.setText(new String("M2 + |M5 · FWP ÷ WB – M5|".getBytes(), StandardCharsets.UTF_8));
-        panel1.add(label3, new GridConstraints(9, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(label3, new GridConstraints(9, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 2, false));
         result2 = new JLabel();
-        Font result2Font = this.$$$getFont$$$("Consolas", Font.BOLD, -1, result2.getFont());
+        Font result2Font = this.setFont("Consolas", Font.BOLD, -1, result2.getFont());
         if (result2Font != null) result2.setFont(result2Font);
         result2.setText("");
         panel1.add(result2, new GridConstraints(9, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -160,10 +164,10 @@ public class Vehicle1 extends JFrame implements IFormula, IFrame {
         calculateButton.setMargin(new Insets(0, 0, 0, 0));
         calculateButton.setSelected(false);
         calculateButton.setText(new String("Рассчитать".getBytes(), StandardCharsets.UTF_8));
-        panel1.add(calculateButton, new GridConstraints(10, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(calculateButton, new GridConstraints(10, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
-    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+    private Font setFont(String fontName, int style, int size, Font currentFont) {
         if (currentFont == null) return null;
         String resultName;
         if (fontName == null) {
@@ -178,12 +182,6 @@ public class Vehicle1 extends JFrame implements IFormula, IFrame {
         }
         return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
-
-
-    public JComponent $$$getRootComponent$$$() {
-        return panel1;
-    }
-
 
     @Override
     public void calculate() {
@@ -204,5 +202,11 @@ public class Vehicle1 extends JFrame implements IFormula, IFrame {
         } catch (ArithmeticException e) {
             log.error("Ошибка при делении на ноль");
         }
+    }
+
+    @Override
+    public synchronized void addWindowListener(WindowListener l) {
+        super.addWindowListener(l);
+
     }
 }
